@@ -1,0 +1,14 @@
+name: test-linter-check
+
+on: push
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: run tests
+        run: npm test
+      
+      - name: run linter
+        run: npx eslint .
