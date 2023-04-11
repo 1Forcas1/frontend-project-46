@@ -11,25 +11,29 @@ const creationTree = (file1, file2) => {
   const fileKeys = getKeys(file1, file2);
 
   const result = fileKeys.map((key) => {
+    const name = key;
+    const valueFile1 = file1[key];
+    const valueFile2 = file2[key];
+
     if (_.has(file1, key) && !_.has(file2, key)) {
-      return { name: key, value: file1[key], status: 'removed' };
+      return { name, value: valueFile1, status: 'removed' };
     }
     if (_.has(file1, key) && _.has(file2, key)) {
-      if (isObject(file1[key]) && isObject(file2[key])) {
-        const children = creationTree(file1[key], file2[key]);
-        return { name: key, children };
+      if (isObject(valueFile1) && isObject(valueFile2)) {
+        const children = creationTree(valueFile1, valueFile2);
+        return { name, children };
       }
-      if (file1[key] === file2[key]) {
-        return { name: key, value: file1[key], status: 'updated' };
+      if (valueFile1 === valueFile2) {
+        return { name, value: valueFile1, status: 'updated' };
       }
-      if (file1[key] !== file2[key]) {
+      if (valueFile1 !== valueFile2) {
         return [
-          { name: key, value: file1[key], status: 'removed' },
-          { name: key, value: file2[key], status: 'added' },
+          { name, value: valueFile1, status: 'removed' },
+          { name, value: valueFile2, status: 'added' },
         ];
       }
     }
-    return { name: key, value: file2[key], status: 'added' };
+    return { name, value: valueFile2, status: 'added' };
   });
 
   return result;
