@@ -5,6 +5,19 @@ const getKeys = (obj1, obj2) => {
   return _.sortBy(keys);
 };
 
+const getInformationAboutDiff = (obj1, obj2, key) => {
+  const name = key;
+
+  if (obj1[key] !== obj2[key]) {
+    return [
+      { name, value: obj1[key], status: 'removed' },
+      { name, value: obj2[key], status: 'added' },
+    ];
+  }
+
+  return { name, value: obj1[key], status: 'unupdated' };
+};
+
 const isObject = (obj) => (_.isObject(obj) && !Array.isArray(obj));
 
 const creationTree = (file1, file2) => {
@@ -23,15 +36,8 @@ const creationTree = (file1, file2) => {
         const children = creationTree(valueFile1, valueFile2);
         return { name, children };
       }
-      if (valueFile1 === valueFile2) {
-        return { name, value: valueFile1, status: 'updated' };
-      }
-      if (valueFile1 !== valueFile2) {
-        return [
-          { name, value: valueFile1, status: 'removed' },
-          { name, value: valueFile2, status: 'added' },
-        ];
-      }
+
+      return getInformationAboutDiff(file1, file2, key);
     }
     return { name, value: valueFile2, status: 'added' };
   });
