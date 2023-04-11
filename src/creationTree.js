@@ -32,7 +32,7 @@ const isObject = (obj) => (_.isObject(obj) && !Array.isArray(obj));
 const creationTree = (file1, file2) => {
   const fileKeys = getKeys(file1, file2);
 
-  const result = fileKeys.map((key) => {
+  const tree = fileKeys.map((key) => {
     const name = key;
     const valueFile1 = file1[key];
     const valueFile2 = file2[key];
@@ -45,7 +45,7 @@ const creationTree = (file1, file2) => {
     return getInformationAboutDiff(file1, file2, key);
   });
 
-  return result;
+  return tree;
 };
 
 export default creationTree;
