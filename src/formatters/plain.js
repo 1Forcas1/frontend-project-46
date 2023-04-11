@@ -22,7 +22,7 @@ const getPlainDiff = (node) => {
   if (node.status === 'added') {
     return `Property '${node.name}' was added with value: ${getValueByItsType(node.value)}`;
   }
-  if (node.status === 'updated') {
+  if (node.status === 'unupdated') {
     return '';
   }
   return `Property '${node.name}' was removed`;
