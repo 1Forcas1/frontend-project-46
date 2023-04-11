@@ -7,15 +7,24 @@ const getKeys = (obj1, obj2) => {
 
 const getInformationAboutDiff = (obj1, obj2, key) => {
   const name = key;
+  const valueObj1 = obj1[key];
+  const valueObj2 = obj2[key];
 
-  if (obj1[key] !== obj2[key]) {
-    return [
-      { name, value: obj1[key], status: 'removed' },
-      { name, value: obj2[key], status: 'added' },
-    ];
+  if (_.has(obj1, key) && _.has(obj2, key)) {
+    if (valueObj1 !== valueObj2) {
+      return [
+        { name, value: valueObj1, status: 'removed' },
+        { name, value: valueObj2, status: 'added' },
+      ];
+    }
+    return { name, value: valueObj1, status: 'unupdated' };
   }
 
-  return { name, value: obj1[key], status: 'unupdated' };
+  if (_.has(obj1, key) && !_.has(obj2, key)) {
+    return { name, value: valueObj1, status: 'removed' };
+  }
+
+  return { name, value: valueObj2, status: 'added' };
 };
 
 const isObject = (obj) => (_.isObject(obj) && !Array.isArray(obj));
@@ -28,18 +37,12 @@ const creationTree = (file1, file2) => {
     const valueFile1 = file1[key];
     const valueFile2 = file2[key];
 
-    if (_.has(file1, key) && !_.has(file2, key)) {
-      return { name, value: valueFile1, status: 'removed' };
+    if (isObject(valueFile1) && isObject(valueFile2) && _.has(file1, key) && _.has(file2, key)) {
+      const children = creationTree(valueFile1, valueFile2);
+      return { name, children };
     }
-    if (_.has(file1, key) && _.has(file2, key)) {
-      if (isObject(valueFile1) && isObject(valueFile2)) {
-        const children = creationTree(valueFile1, valueFile2);
-        return { name, children };
-      }
 
-      return getInformationAboutDiff(file1, file2, key);
-    }
-    return { name, value: valueFile2, status: 'added' };
+    return getInformationAboutDiff(file1, file2, key);
   });
 
   return result;
