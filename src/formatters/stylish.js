@@ -47,20 +47,18 @@ const getDiffInStatus = (node, depth) => {
 const arr = (node, depth) => {
   const currentIndent = getCurrentIndent(depth);
 
-  const nearProperties = node.map((joint) => {
-    if (_.isObject(joint.value) && joint.status === 'removed') {
-      return `${currentIndent}- ${joint.name}: {\n${obj(joint.value, depth + 1)}${currentIndent}  }\n`;
-    }
-    if (_.isObject(joint.value) && joint.status === 'added') {
-      return `${currentIndent}+ ${joint.name}: {\n${obj(joint.value, depth + 1)}${currentIndent}  }`;
-    }
-    if (joint.status === 'removed') {
-      return `${currentIndent}- ${joint.name}: ${joint.value}\n`;
-    }
-    return `${currentIndent}+ ${joint.name}: ${joint.value}`;
-  });
+  if (isObject(node.oldValue) && !isObject(node.newValue)) {
+    const oldValue = `${currentIndent}- ${node.name}: {\n${obj(node.oldValue, depth + 1)}${currentIndent}  }`;
+    const newValue = `${currentIndent}+ ${node.name}: ${node.newValue}`;
+    return `${oldValue}\n${newValue}`;
+  }
+  if (!isObject(node.oldValue) && isObject(node.newValue)) {
+    const oldValue = `${currentIndent}- ${node.name}: ${node.oldValue}`;
+    const newValue = `${currentIndent}+ ${node.name}: {\n${obj(node.newValue, depth + 1)}${currentIndent}  }`;
+    return `${oldValue}\n${newValue}`;
+  }
 
-  return nearProperties.join('');
+  return `${currentIndent}- ${node.name}: ${node.oldValue}\n${currentIndent}+ ${node.name}: ${node.newValue}`;
 };
 
 const stylish = (tree) => {
@@ -74,7 +72,7 @@ const stylish = (tree) => {
         const { children } = unit;
         return `${currentIndent}  ${name}: {\n${iter(children, depth + 1)}\n${currentIndent}  }`;
       }
-      if (Array.isArray(unit)) {
+      if (unit.status === 'updated') {
         return arr(unit, depth);
       }
 
