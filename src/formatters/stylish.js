@@ -12,26 +12,26 @@ const getCurrentIndent = (depth) => {
   return currentIndent;
 };
 
-const obj = (node, depth) => {
+const parceObject = (node, depth) => {
   const currentIndent = getCurrentIndent(depth);
 
   const keysAndValues = Object.entries(node);
   return keysAndValues.map(([key, value]) => {
     if (_.isObject(value)) {
-      return `${currentIndent}  ${key}: {\n${obj(value, depth + 1)}${currentIndent}  }\n`;
+      return `${currentIndent}  ${key}: {\n${parceObject(value, depth + 1)}${currentIndent}  }\n`;
     }
     return `${currentIndent}  ${key}: ${value}\n`;
   }).join('');
 };
 
-const getDiffInStatus = (node, depth) => {
+const generationDiffByStatus = (node, depth) => {
   const currentIndent = getCurrentIndent(depth);
 
   if (isObject(node.value)) {
     if (node.status === 'added') {
-      return `${currentIndent}+ ${node.name}: {\n${obj(node.value, depth + 1)}${currentIndent}  }`;
+      return `${currentIndent}+ ${node.name}: {\n${parceObject(node.value, depth + 1)}${currentIndent}  }`;
     }
-    return `${currentIndent}- ${node.name}: {\n${obj(node.value, depth + 1)}${currentIndent}  }`;
+    return `${currentIndent}- ${node.name}: {\n${parceObject(node.value, depth + 1)}${currentIndent}  }`;
   }
 
   switch (node.status) {
@@ -44,17 +44,17 @@ const getDiffInStatus = (node, depth) => {
   }
 };
 
-const arr = (node, depth) => {
+const generationUpdatedDiff = (node, depth) => {
   const currentIndent = getCurrentIndent(depth);
 
   if (isObject(node.oldValue) && !isObject(node.newValue)) {
-    const oldValue = `${currentIndent}- ${node.name}: {\n${obj(node.oldValue, depth + 1)}${currentIndent}  }`;
+    const oldValue = `${currentIndent}- ${node.name}: {\n${parceObject(node.oldValue, depth + 1)}${currentIndent}  }`;
     const newValue = `${currentIndent}+ ${node.name}: ${node.newValue}`;
     return `${oldValue}\n${newValue}`;
   }
   if (!isObject(node.oldValue) && isObject(node.newValue)) {
     const oldValue = `${currentIndent}- ${node.name}: ${node.oldValue}`;
-    const newValue = `${currentIndent}+ ${node.name}: {\n${obj(node.newValue, depth + 1)}${currentIndent}  }`;
+    const newValue = `${currentIndent}+ ${node.name}: {\n${parceObject(node.newValue, depth + 1)}${currentIndent}  }`;
     return `${oldValue}\n${newValue}`;
   }
 
@@ -65,21 +65,20 @@ const stylish = (tree) => {
   const iter = (node, depth) => {
     const currentIndent = getCurrentIndent(depth);
 
-    const result = node.map((unit) => {
+    return node.map((unit) => {
       const { name } = unit;
 
       if (Object.keys(unit).includes('children')) {
         const { children } = unit;
         return `${currentIndent}  ${name}: {\n${iter(children, depth + 1)}\n${currentIndent}  }`;
       }
+
       if (unit.status === 'updated') {
-        return arr(unit, depth);
+        return generationUpdatedDiff(unit, depth);
       }
 
-      return getDiffInStatus(unit, depth);
-    });
-
-    return result.join('\n');
+      return generationDiffByStatus(unit, depth);
+    }).join('\n');
   };
 
   return `{\n${iter(tree, 1)}\n}`;
