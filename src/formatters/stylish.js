@@ -33,13 +33,15 @@ const getDiffInStatus = (node, depth) => {
     }
     return `${currentIndent}- ${node.name}: {\n${obj(node.value, depth + 1)}${currentIndent}  }`;
   }
-  if (node.status === 'added') {
-    return `${currentIndent}+ ${node.name}: ${node.value}`;
+
+  switch (node.status) {
+    case 'added':
+      return `${currentIndent}+ ${node.name}: ${node.value}`;
+    case 'removed':
+      return `${currentIndent}- ${node.name}: ${node.value}`;
+    default:
+      return `${currentIndent}  ${node.name}: ${node.value}`;
   }
-  if (node.status === 'removed') {
-    return `${currentIndent}- ${node.name}: ${node.value}`;
-  }
-  return `${currentIndent}  ${node.name}: ${node.value}`;
 };
 
 const arr = (node, depth) => {
