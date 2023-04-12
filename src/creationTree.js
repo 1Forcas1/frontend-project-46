@@ -12,10 +12,9 @@ const getInformationAboutDiff = (obj1, obj2, key) => {
 
   if (_.has(obj1, key) && _.has(obj2, key)) {
     if (valueObj1 !== valueObj2) {
-      return [
-        { name, value: valueObj1, status: 'removed' },
-        { name, value: valueObj2, status: 'added' },
-      ];
+      return {
+        name, oldValue: valueObj1, newValue: valueObj2, status: 'updated',
+      };
     }
     return { name, value: valueObj1, status: 'unupdated' };
   }
