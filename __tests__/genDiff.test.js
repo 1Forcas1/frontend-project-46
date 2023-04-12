@@ -48,6 +48,26 @@ test('dif plain format json files', () => {
   expect(genDiff(file1, file2, formatName)).toEqual(dif);
 });
 
+test('dif plain format yml files', () => {
+  const file1 = getFixturePath('file1.yml');
+  const file2 = getFixturePath('file2.yaml');
+
+  const dif = readFile('expected_file_plain_format.txt');
+  const formatName = 'plain';
+
+  expect(genDiff(file1, file2, formatName)).toEqual(dif);
+});
+
+test('dif json format', () => {
+  const file1 = getFixturePath('file1.json');
+  const file2 = getFixturePath('file2.json');
+
+  const dif = readFile('expected_file_json_format.txt');
+  const formatName = 'json';
+
+  expect(genDiff(file1, file2, formatName)).toEqual(dif);
+});
+
 test('error', () => {
   const file1 = getFixturePath('file1.yml');
   const file2 = getFixturePath('file2.yaml');
