@@ -36,9 +36,9 @@ const plain = (tree) => {
       if (Object.keys(unit).includes('children')) {
         const { children } = unit;
         const nestedProperties = children.map((child) => {
-          // eslint-disable-next-line no-param-reassign
-          child.name = `${name}.${child.name}`;
-          return child;
+          const newName = `${name}.${child.name}`;
+          const newChild = { ...child, name: newName };
+          return newChild;
         });
         return iter(nestedProperties);
       }
