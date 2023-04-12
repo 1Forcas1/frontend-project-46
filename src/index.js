@@ -1,6 +1,6 @@
 import path from 'path';
 import { readFileSync } from 'node:fs';
-import creationTree from './creationTree.js';
+import { creationTree } from './creationTree.js';
 import parsers from './parsers.js';
 import format from './formatters/index.js';
 
