@@ -48,4 +48,4 @@ const creationTree = (file1, file2) => {
   return tree;
 };
 
-export default creationTree;
+export { creationTree, isObject };
