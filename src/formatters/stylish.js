@@ -1,12 +1,19 @@
 import _ from 'lodash';
+import { isObject } from '../creationTree.js';
+
+const getCurrentIndent = (depth, replacer = ' ', spacesCount = 4) => {
+  const shiftToLeft = 2;
+  const indentSize = (spacesCount * depth) - shiftToLeft;
+  const currentIndent = replacer.repeat(indentSize);
+
+  return currentIndent;
+};
 
 const stylish = (tree, replacer = ' ', spacesCount = 4) => {
   const iter = (node, depth) => {
-    const shiftToLeft = 2;
-    const indentSize = (spacesCount * depth) - shiftToLeft;
-    const currentIndent = replacer.repeat(indentSize);
+    const currentIndent = getCurrentIndent(depth, replacer, spacesCount);
 
-    if (_.isObject(node) && !Array.isArray(node)) {
+    if (isObject(node)) {
       const keysAndValues = Object.entries(node);
       return keysAndValues.map(([key, value]) => {
         if (_.isObject(value)) {
@@ -40,7 +47,7 @@ const stylish = (tree, replacer = ' ', spacesCount = 4) => {
         return nearProperties.join('');
       }
 
-      if (_.isObject(unit.value) && !Array.isArray(unit.value)) {
+      if (isObject(unit.value)) {
         if (unit.status === 'added') {
           return `${currentIndent}+ ${name}: {\n${iter(unit.value, depth + 1)}${currentIndent}  }`;
         }
