@@ -31,9 +31,7 @@ const getDiffInStatus = (node, depth) => {
     if (node.status === 'added') {
       return `${currentIndent}+ ${node.name}: {\n${obj(node.value, depth + 1)}${currentIndent}  }`;
     }
-    if (node.status === 'removed') {
-      return `${currentIndent}- ${node.name}: {\n${obj(node.value, depth + 1)}${currentIndent}  }`;
-    }
+    return `${currentIndent}- ${node.name}: {\n${obj(node.value, depth + 1)}${currentIndent}  }`;
   }
   if (node.status === 'added') {
     return `${currentIndent}+ ${node.name}: ${node.value}`;
