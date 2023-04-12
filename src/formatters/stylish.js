@@ -12,16 +12,6 @@ const getCurrentIndent = (depth) => {
   return currentIndent;
 };
 
-const getDiffInStatus = (node, currentIndent) => {
-  if (node.status === 'added') {
-    return `${currentIndent}+ ${node.name}: ${node.value}`;
-  }
-  if (node.status === 'removed') {
-    return `${currentIndent}- ${node.name}: ${node.value}`;
-  }
-  return `${currentIndent}  ${node.name}: ${node.value}`;
-};
-
 const obj = (node, depth) => {
   const currentIndent = getCurrentIndent(depth);
 
@@ -32,6 +22,26 @@ const obj = (node, depth) => {
     }
     return `${currentIndent}  ${key}: ${value}\n`;
   }).join('');
+};
+
+const getDiffInStatus = (node, depth) => {
+  const currentIndent = getCurrentIndent(depth);
+
+  if (isObject(node.value)) {
+    if (node.status === 'added') {
+      return `${currentIndent}+ ${node.name}: {\n${obj(node.value, depth + 1)}${currentIndent}  }`;
+    }
+    if (node.status === 'removed') {
+      return `${currentIndent}- ${node.name}: {\n${obj(node.value, depth + 1)}${currentIndent}  }`;
+    }
+  }
+  if (node.status === 'added') {
+    return `${currentIndent}+ ${node.name}: ${node.value}`;
+  }
+  if (node.status === 'removed') {
+    return `${currentIndent}- ${node.name}: ${node.value}`;
+  }
+  return `${currentIndent}  ${node.name}: ${node.value}`;
 };
 
 const arr = (node, depth) => {
@@ -68,16 +78,7 @@ const stylish = (tree) => {
         return arr(unit, depth);
       }
 
-      if (isObject(unit.value)) {
-        if (unit.status === 'added') {
-          return `${currentIndent}+ ${name}: {\n${obj(unit.value, depth + 1)}${currentIndent}  }`;
-        }
-        if (unit.status === 'removed') {
-          return `${currentIndent}- ${name}: {\n${obj(unit.value, depth + 1)}${currentIndent}  }`;
-        }
-      }
-
-      return getDiffInStatus(unit, currentIndent);
+      return getDiffInStatus(unit, depth);
     });
 
     return result.join('\n');
