@@ -25,3 +25,8 @@ make install
 gendiff -h 
 ```
 
+## Package work examples
+
+* json files difference in stylish format
+
+[![asciicast](https://asciinema.org/a/577141.svg)](https://asciinema.org/a/577141)
