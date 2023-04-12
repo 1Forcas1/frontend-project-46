@@ -30,3 +30,19 @@ gendiff -h
 * json files difference in stylish format
 
 [![asciicast](https://asciinema.org/a/577141.svg)](https://asciinema.org/a/577141)
+
+* yml/yaml files difference in stylish format
+
+[![asciicast](https://asciinema.org/a/577142.svg)](https://asciinema.org/a/577142)
+
+* json files difference in plain format
+
+[![asciicast](https://asciinema.org/a/577143.svg)](https://asciinema.org/a/577143)
+
+* yml/yaml files difference in plain format
+
+[![asciicast](https://asciinema.org/a/577144.svg)](https://asciinema.org/a/577144)
+
+* difference in json format
+
+[![asciicast](https://asciinema.org/a/577145.svg)](https://asciinema.org/a/577145)
