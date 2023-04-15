@@ -11,6 +11,6 @@ export default (innerTree, format) => {
     case 'json':
       return json(innerTree);
     default:
-      throw new Error(`Формат не поддерживается: ${format}`);
+      throw new Error(`Format not supported: ${format}`);
   }
 };
