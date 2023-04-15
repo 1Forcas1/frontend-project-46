@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "type": "module",
-  "description": "[![Actions Status](https://github.com/1Forcas1/frontend-project-46/workflows/hexlet-check/badge.svg)](https://github.com/1Forcas1/frontend-project-46/actions)",
+  "description": "Difference calculator is a program that perceives the difference between two data structures.",
   "bin": {
     "gendiff": "bin/gendiff.js"
   },
