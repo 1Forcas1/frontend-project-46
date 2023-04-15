@@ -11,71 +11,57 @@ const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', 
 
 const readFile = (filename) => readFileSync(getFixturePath(filename), 'utf-8');
 
-test('dif json files', () => {
-  const file1 = getFixturePath('file1.json');
-  const file2 = getFixturePath('file2.json');
+const extensions = ['yaml', 'json'];
 
-  const dif = readFile('expected_file.txt');
+const expectedFile = readFile('expected_file.txt');
+const expectedFile2 = readFile('expected_file2.txt');
+const expectedFileJsonFormat = readFile('expected_file_json_format.txt');
+const expectedFilePlainFormat = readFile('expected_file_plain_format.txt');
 
-  expect(genDiff(file1, file2)).toEqual(dif);
+test.each(extensions)('path formation', (ext) => {
+  const fileBefore = getFixturePath(`file1.${ext}`);
+  const fileAfter = getFixturePath(`file2.${ext}`);
+
+  expect(genDiff(fileBefore, fileAfter, 'stylish')).toEqual(expectedFile);
+  expect(genDiff(fileBefore, fileAfter, 'plain')).toEqual(expectedFilePlainFormat);
+  expect(genDiff(fileBefore, fileAfter, 'json')).toEqual(expectedFileJsonFormat);
+  expect(genDiff(fileBefore, fileAfter)).toEqual(expectedFile);
 });
 
 test('dif json files2', () => {
-  const file3 = getFixturePath('file3.json');
-  const file4 = getFixturePath('file4.json');
+  const file1 = getFixturePath('file3.json');
+  const file2 = getFixturePath('file4.json');
 
-  const dif2 = readFile('expected_file2.txt');
-
-  expect(genDiff(file3, file4)).toEqual(dif2);
+  expect(genDiff(file1, file2)).toEqual(expectedFile2);
 });
 
-test('dif yml files', () => {
-  const file1 = getFixturePath('file1.yml');
-  const file2 = getFixturePath('file2.yaml');
+test('parser yml', () => {
+  const file1 = getFixturePath('file1.yaml');
+  const file2 = getFixturePath('file3.yml');
 
-  const dif = readFile('expected_file.txt');
-
-  expect(genDiff(file1, file2)).toEqual(dif);
+  expect(genDiff(file1, file2)).toEqual(expectedFile);
 });
 
-test('dif plain format json files', () => {
-  const file1 = getFixturePath('file1.json');
-  const file2 = getFixturePath('file2.json');
+test('parser error', () => {
+  const file1 = getFixturePath('file4.json');
+  const file2 = getFixturePath('file4.txt');
 
-  const dif = readFile('expected_file_plain_format.txt');
-  const formatName = 'plain';
+  const extnameFile2 = '.txt';
 
-  expect(genDiff(file1, file2, formatName)).toEqual(dif);
+  const checkParse = () => genDiff(file1, file2);
+  const error = new Error(`Incorrect extension - ${extnameFile2}`);
+
+  expect(checkParse).toThrow(error);
 });
 
-test('dif plain format yml files', () => {
-  const file1 = getFixturePath('file1.yml');
-  const file2 = getFixturePath('file2.yaml');
-
-  const dif = readFile('expected_file_plain_format.txt');
-  const formatName = 'plain';
-
-  expect(genDiff(file1, file2, formatName)).toEqual(dif);
-});
-
-test('dif json format', () => {
-  const file1 = getFixturePath('file1.json');
-  const file2 = getFixturePath('file2.json');
-
-  const dif = readFile('expected_file_json_format.txt');
-  const formatName = 'json';
-
-  expect(genDiff(file1, file2, formatName)).toEqual(dif);
-});
-
-test('error', () => {
-  const file1 = getFixturePath('file1.yml');
+test('format error', () => {
+  const file1 = getFixturePath('file4.json');
   const file2 = getFixturePath('file2.yaml');
 
   const formatName = 'null';
 
   const checkParse = () => genDiff(file1, file2, formatName);
-  const error = new Error(`Формат не поддерживается: ${formatName}`);
+  const error = new Error(`Format not supported: ${formatName}`);
 
   expect(checkParse).toThrow(error);
 });
